@@ -52,10 +52,18 @@ func main() {
 	})
 	app.Post("/api", func(c *fiber.Ctx) error {
 		// Write a todo to the application
-		sampleDoc := bson.M{"name": "Sample todo"}
+		sampleDoc := []interface{}{
+			bson.M{"name": "React js book", "completed": false, "type": "book"},
+			bson.M{"name": "Javascript the weird part", "completed": false, "type": "video course"},
+			bson.M{"name": "laracast PHP course", "completed": false, "type": "video course"},
+		}
 		collection := database.GetCollection("todos")
-		nDoc, err := collection.InsertOne(context.TODO(), sampleDoc)
-		return c.SendString("Hello, World 👋!")
+		nDoc, err := collection.InsertMany(context.TODO(), sampleDoc)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).SendString("Error inserting todo")
+		}
+		// send down info about the todo
+		return c.JSON(nDoc)
 	})
 
 	app.Listen(":3000")
