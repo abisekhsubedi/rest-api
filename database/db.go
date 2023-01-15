@@ -11,6 +11,10 @@ import (
 
 var mongoClient *mongo.Client
 
+// GetCollection returns a collection from the database
+func GetCollection(name string) *mongo.Collection {
+	return mongoClient.Database("test").Collection(name)
+}
 // StartMongoDB starts the mongodb database
 func StartMongoDB() error {
 	uri := os.Getenv("MONGODB_URI")
